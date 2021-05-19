@@ -10,43 +10,62 @@
     <title>{% block title %}Home{% endblock %}</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand d-flex flex-column align-item-start active-nav" id="sidebar">
-        <a href="#" class="navbar-brand text-light mt-5">
-            <div class="display-5 font-weight-bold">MESH</div>
-        </a>
-        <ul class="navbar-nav d-flex flex-column mt-5 w-100">
-            <li class="nav-item w-100">
-                <a href="/" id="home" class="nav-link text-light pl-4">Home</a>
-            </li>
-            <li class="nav-item w-100">
-                <a href="/logout" id="logout" class="nav-link text-light pl-4">Logout</a>
-            </li>
-            <li class="nav-item w-100">
-                <a href="/login" id="login" class="nav-link text-light pl-4">Login</a>
-            </li>
-            <li class="nav-item w-100">
-                <a href="/sign-up" id="signUp" class="nav-link text-light pl-4">Sign Up</a>
-            </li>
-        </ul>
-    </nav>
-<!--    <section class="p-4 my-container">-->
-<!--        <button class="btn my-4" id="menu-btn">seemek</button>-->
-<!--        <h1>Bootstrap 5 Sidebar Navigation</h1>-->
-<!--        <p class="text-dark">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam facilis inventore harum, architecto libero recusandae porro doloremque sunt cum consectetur, autem, vitae ea nihil sapiente voluptas at aut suscipit eos? Sapiente quam culpa aliquam-->
-<!--            itaque debitis nihil doloremque rem! Praesentium quae, facere nobis impedit quisquam aliquid maxime error? Totam eaque earum fuga aliquam sequi excepturi illum optio quas tempora ea! Eum perspiciatis accusantium distinctio eveniet consequatur-->
-<!--            sint illo officiis? Saepe dolores fugiat rerum, voluptatem sunt culpa nihil accusantium voluptates unde hic magnam quos est perspiciatis recusandae incidunt quod laborum vitae. Harum modi inventore ea odit eaque ut maiores voluptate nihil-->
-<!--            aspernatur voluptatibus exercitationem ipsa nam animi neque tempore, eligendi, repellendus praesentium ex voluptatum? Magni laboriosam nemo, assumenda veniam aperiam eum! Eos, ipsum. Eum illo quos quo tempora excepturi reprehenderit numquam-->
-<!--            voluptas! Blanditiis autem optio labore quisquam culpa, tempora minus eum repudiandae ea voluptatem quia obcaecati velit cum dolorum esse dolorem!</p>-->
-<!--        <p class="text-dark">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam facilis inventore harum, architecto libero recusandae porro doloremque sunt cum consectetur, autem, vitae ea nihil sapiente voluptas at aut suscipit eos? Sapiente quam culpa aliquam-->
-<!--            itaque debitis nihil doloremque rem! Praesentium quae, facere nobis impedit quisquam aliquid maxime error? Totam eaque earum fuga aliquam sequi excepturi illum optio quas tempora ea! Eum perspiciatis accusantium distinctio eveniet consequatur-->
-<!--            sint illo officiis? Saepe dolores fugiat rerum, voluptatem sunt culpa nihil accusantium voluptates unde hic magnam quos est perspiciatis recusandae incidunt quod laborum vitae. Harum modi inventore ea odit eaque ut maiores voluptate nihil-->
-<!--            aspernatur voluptatibus exercitationem ipsa nam animi neque tempore, eligendi, repellendus praesentium ex voluptatum? Magni laboriosam nemo, assumenda veniam aperiam eum! Eos, ipsum. Eum illo quos quo tempora excepturi reprehenderit numquam-->
-<!--            voluptas! Blanditiis autem optio labore quisquam culpa, tempora minus eum repudiandae ea voluptatem quia obcaecati velit cum dolorum esse dolorem!</p>-->
-<!--    </section>-->
+<!--    <nav class="navbar navbar-expand d-flex flex-column align-item-start active-nav" id="sidebar">-->
+<!--        <a href="#" class="navbar-brand text-light mt-5">-->
+<!--            <div class="display-5 font-weight-bold">MESH</div>-->
+<!--        </a>-->
+<!--        <ul class="navbar-nav d-flex flex-column mt-5 w-100">-->
+<!--            <li class="nav-item w-100">-->
+<!--                <a href="/" id="home" class="nav-link text-light pl-4">Home</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item w-100">-->
+<!--                <a href="/logout" id="logout" class="nav-link text-light pl-4">Logout</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item w-100">-->
+<!--                <a href="/login" id="login" class="nav-link text-light pl-4">Login</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item w-100">-->
+<!--                <a href="/sign-up" id="signUp" class="nav-link text-light pl-4">Sign Up</a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
 
- {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %} {% if category ==
-    'error' %}
+
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                <a href="#" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <span class="display-5 font-weight-bold">MESH</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="/" class="nav-link align-middle px-0">
+                            <span class="ms-1 d-none d-sm-inline">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/logout" class="nav-link px-0 align-middle">
+                            <span class="ms-1 d-none d-sm-inline">Logout</span> </a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/login" class="nav-link px-0 align-middle">
+                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Login</span></a>
+                    </li>
+                    <li>
+                        <a href="/sign-up" class="nav-link px-0 align-middle">
+                            <span class="ms-1 d-none d-sm-inline">Sign Up</span> </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    <div class="col py-3">
+            {% with messages = get_flashed_messages(with_categories=true) %} {% if
+            messages %} {% for category, message in messages %} {% if category ==
+            'error' %}
     <div class="alert alert-danger alter-dismissable fade show" role="alert">
       {{ message }}
       <button type="button" class="close" data-dismiss="alert">
@@ -61,8 +80,11 @@
       </button>
     </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
+        <div class="container">{% block content %} {% endblock %}</div>
+    </div>
+    </div>
+</div>
 
-    <div class="container">{% block content %} {% endblock %}</div>
 
     <!-- bootstrap js -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
