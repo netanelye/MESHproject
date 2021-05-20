@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from . import db
-from .models import User
+from .models import User, Priority
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -39,6 +39,12 @@ def sign_up():
         first_name = request.form.get('name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        kosher = request.form.get('kosher') != None
+        gluten = request.form.get('gluten') != None
+        lactose = request.form.get('lactose') != None
+        vegetarian = request.form.get('vegetarian') != None
+        vegan = request.form.get('vegan') != None
+        # priorityList = request.form.getlist('priority')
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists', category='error')
@@ -51,11 +57,17 @@ def sign_up():
         elif len(password1) < 7:
             flash('Password must be at least 7 chars.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))
+            new_user = User(email=email, first_name=first_name,
+                            password=generate_password_hash(password1, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
+            priority = Priority(kosher=kosher, gluten=gluten, lactose=lactose, vegetarian=vegetarian, vegan=vegan,
+                                user_id=current_user.id)
+            db.session.add(priority)
+            db.session.commit()
+            print(Priority.query.all().kosher)
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)

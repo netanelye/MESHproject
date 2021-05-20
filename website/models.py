@@ -16,4 +16,15 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
+    priorities = db.relationship('Priority')
+
+
+class Priority(db.Model):
+    priority_id = db.Column(db.Integer, primary_key=True)
+    kosher = db.Column(db.Boolean())
+    gluten = db.Column(db.Boolean())
+    lactose = db.Column(db.Boolean())
+    vegetarian = db.Column(db.Boolean())
+    vegan = db.Column(db.Boolean())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
