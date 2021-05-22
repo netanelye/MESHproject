@@ -9,7 +9,7 @@ content %}
       class="form-control"
       id="email"
       name="email"
-      placeholder="Enter email"
+      placeholder={% if user.is_authenticated %} {{ user.name }} {% else %} "Enter email" {% endif %}
     />
   </div>
   <div class="form-group">

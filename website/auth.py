@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from . import db
-from .models import User, Priority
+from .models import User, Priority, Recipe, Ingredient
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -67,7 +67,45 @@ def sign_up():
                                 user_id=current_user.id)
             db.session.add(priority)
             db.session.commit()
-            print(Priority.query.all().kosher)
+            print(Priority.query.all())
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
+
+
+# @auth.route('/update', methods=['GET', 'POST'])
+# @login_required
+# def update():
+
+
+
+@auth.route('/database', methods=['GET', 'POST'])
+def database():
+    initTable()
+    return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all())
+
+
+def initTable():
+    recipe1 = Recipe(name='pizza')
+    recipe2 = Recipe(name='burger')
+    recipe3 = Recipe(name='Cake')
+    db.session.add(recipe1)
+    db.session.add(recipe2)
+    db.session.add(recipe3)
+    db.session.commit()
+    ingredient1 = Ingredient(name='onion')
+    ingredient2 = Ingredient(name='garlic')
+    ingredient3 = Ingredient(name='tomato')
+    ingredient4 = Ingredient(name='cheese')
+    db.session.add(ingredient1)
+    db.session.add(ingredient2)
+    db.session.add(ingredient3)
+    db.session.add(ingredient4)
+    db.session.commit()
+    ingredient1.recipes.append(recipe1)
+    ingredient1.recipes.append(recipe2)
+    ingredient1.recipes.append(recipe3)
+    ingredient2.recipes.append(recipe1)
+    ingredient3.recipes.append(recipe3)
+    ingredient3.recipes.append(recipe3)
+    db.session.commit()

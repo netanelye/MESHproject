@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block title %}Ingredients{% endblock %} {% block content
+%}
+<h1 align="center">Add Ingredients</h1>
+<ul class="list-group list-group-flush" id="notes">
+  {% for search in user.elements %}
+  <li class="list-group-item">
+    {{ search.data }}
+    <button type="button" class="close" onClick="deleteElement({{ search.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+<form method="POST">
+  <textarea name="searchElement" id="searchElement" class="form-control"></textarea>
+  <br />
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Add Ingredients</button>
+  </div>
+</form>
+
+<script
+      type="text/javascript"
+      src="{{ url_for('static', filename='index.js') }}"
+    ></script>
+
+{% endblock %}
