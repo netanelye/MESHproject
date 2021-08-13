@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from . import db
-from .models import Recipe, Ingredient, Category,Recipe_Ingredient
+from .models import Recipe, Ingredient, Category, Recipe_Ingredient
 from flask_login import current_user
 
 from bs4 import BeautifulSoup
@@ -101,21 +101,33 @@ def database():
     # initTable()
     #buildDB()
 
-    ingreds = Ingredient.query.all()
-    for ingredient in ingreds:
-        if ingredient.name == 'קנלוני':
-            x= ingredient.recipes1
+    # x = Ingredient.query.filter_by(name= 'קנלוני' ).first()
+    x = findRecipesByIngredientsNames(['מלח דק', 'שום', 'שמן זית','גבינת מוצרלה'])
 
-    print(x)
+    # user = Ingredient.query.filter((Ingredient.name == 'מלח גס')).first()
+
+    # x = Ingredient.query.filter((Ingredient.name == 'קנלוני'))
+
+    # ingreds = Ingredient.query.all()
+    # for ingredient in ingreds:
+    #     if ingredient.name == 'קנלוני':
+    #         x= ingredient.recipes1
+    #
+    # print(x)
     # all_Ingredients = Ingredient.query.all()
-
 
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
 
 
-# def findRecipesByIngredientsNames(IngredientsArr)
+def findRecipesByIngredientsNames(IngredientsArr):
+    y = Ingredient.query.filter_by(name=IngredientsArr[0]).first()
+    setList = set(y.recipes1)
+    for i in range(1, len(IngredientsArr)):
+        ingredient = Ingredient.query.filter_by(name=IngredientsArr[i]).first()
+        setList = setList.intersection(set(ingredient.recipes1))
 
+    return setList
 
 
 def initTable():
