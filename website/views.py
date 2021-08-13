@@ -38,3 +38,15 @@ def delete_note():
             db.session.delete(searchElement)
             db.session.commit()
     return jsonify({})
+
+
+@views.route('/showRecipes', methods=['post'])
+def delete_note():
+    searchElement = json.loads(request.data)
+    searchElementId = searchElement['searchID']
+    searchElement = SearchElement.query.get(searchElementId)
+    if searchElement:
+        if searchElement.user_id == current_user.id:
+            db.session.delete(searchElement)
+            db.session.commit()
+    return jsonify({})

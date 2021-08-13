@@ -39,11 +39,11 @@ def sign_up():
         first_name = request.form.get('name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-        kosher = request.form.get('kosher') != None
-        gluten = request.form.get('gluten') != None
-        lactose = request.form.get('lactose') != None
-        vegetarian = request.form.get('vegetarian') != None
-        vegan = request.form.get('vegan') != None
+        kosher = request.form.get('kosher') is not None
+        gluten = request.form.get('gluten') is not None
+        lactose = request.form.get('lactose') is not None
+        vegetarian = request.form.get('vegetarian') is not None
+        vegan = request.form.get('vegan') is not None
         # priorityList = request.form.getlist('priority')
         user = User.query.filter_by(email=email).first()
         if user:
@@ -78,11 +78,10 @@ def sign_up():
 # def update():
 
 
-
 @auth.route('/database', methods=['GET', 'POST'])
 def database():
     initTable()
-    return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all())
+    return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Catgories.query.all())
 
 
 def initTable():
