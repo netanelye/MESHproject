@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from . import db
-from .models import Recipe, Ingredient, Category
+from .models import Recipe, Ingredient, Category,Recipe_Ingredient
 from flask_login import current_user
 
 from bs4 import BeautifulSoup
@@ -99,9 +99,23 @@ def scrapRecipeCategories(recipeLink):
 @api.route('/getdata', methods=['GET', 'POST'])
 def database():
     # initTable()
-    buildDB()
+    #buildDB()
+
+    ingreds = Ingredient.query.all()
+    for ingredient in ingreds:
+        if ingredient.name == 'קנלוני':
+            x= ingredient.recipes1
+
+    print(x)
+    # all_Ingredients = Ingredient.query.all()
+
+
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
+
+
+# def findRecipesByIngredientsNames(IngredientsArr)
+
 
 
 def initTable():

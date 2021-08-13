@@ -81,7 +81,7 @@ def sign_up():
 @auth.route('/database', methods=['GET', 'POST'])
 def database():
     initTable()
-    return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Catgories.query.all())
+    return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all())
 
 
 def initTable():
