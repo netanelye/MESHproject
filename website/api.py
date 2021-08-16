@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template
+import json
+
+from flask import Blueprint, render_template, jsonify
 from . import db
 from .models import Recipe, Ingredient, Category, Recipe_Ingredient
 from flask_login import current_user
@@ -7,8 +9,11 @@ from bs4 import BeautifulSoup
 import lxml
 import requests
 
-foodyCategoriesLinkPath = 'https://foody.co.il/category/%d7%9e%d7%aa%d7%9b%d7%95%d7%a0%d7%99-%d7%a2%d7%9e%d7%99%d7%9d-%d7%95%d7%a2%d7%93%d7%95%d7%aa/'
-foodySubCategoryRecipesLinksPath = 'https://foody.co.il/category/%D7%9E%D7%AA%D7%9B%D7%95%D7%A0%D7%99-%D7%A2%D7%9E%D7%99%D7%9D-%D7%95%D7%A2%D7%93%D7%95%D7%AA/%D7%90%D7%95%D7%9B%D7%9C-%D7%90%D7%99%D7%98%D7%9C%D7%A7%D7%99/?page=10'
+foodyCategoriesLinkPath = 'https://foody.co.il/category/%d7%9e%d7%aa%d7%9b%d7%95%d7%a0%d7%99-%d7%a2%d7%9e%d7%99%d7%9d' \
+                          '-%d7%95%d7%a2%d7%93%d7%95%d7%aa/ '
+foodySubCategoryRecipesLinksPath = 'https://foody.co.il/category/%D7%9E%D7%AA%D7%9B%D7%95%D7%A0%D7%99-%D7%A2%D7%9E%D7' \
+                                   '%99%D7%9D-%D7%95%D7%A2%D7%93%D7%95%D7%AA/%D7%90%D7%95%D7%9B%D7%9C-%D7%90%D7%99%D7' \
+                                   '%98%D7%9C%D7%A7%D7%99/?page=10 '
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -22,7 +27,6 @@ def buildDB():
     for li in range(0, len(allCategoriesLiTags)):
         image = allCategoriesLiTags[li].a.img['src']
         scrapRecipesLinksFromMainCategory(allCategoriesLiTags[li].a['href'], image)
-        break
 
 
 def scrapRecipesLinksFromMainCategory(categoryLink, image):
@@ -67,8 +71,8 @@ def scrapRecipesLinksFromMainCategory(categoryLink, image):
                 Category1.recipes.append(newRecipe)
                 db.session.commit()
 
-        if i == 5:
-            break
+        # if i == 5:
+        #     break
 
         # print("     #### RECIPE NUMBER " + str(i) + " ####\n ")
 
@@ -96,26 +100,49 @@ def scrapRecipeCategories(recipeLink):
     return categoryArr
 
 
+# The function returns json object of Ingredients : {'name1: 'onion', 'name2':'carrot'}
+@api.route('/getIngredientList', methods=['GET', 'POST'])
+def getIngredients():
+    ingredientsArr = {'name{}'.format(j): ingredient.name for j, ingredient in enumerate(Ingredient.query.all())}
+    return jsonify(ingredientsArr)
+
+
+# The function returns json object of Recipes after Match :
+# json example:
+# recipe0 {
+#     'name' : 'מתכון להכנת פיצה'
+#     'link' : 'link for foody website recipe
+#     'imageLink : 'link for image'
+#     'ingredients' : {
+#                       'name0' : 'onion'
+#                       'name1' : 'salt'
+#                     }
+#     'categories' : {
+#                       'name0' : 'kosher'
+#                       'name1' : 'vegan'
+#                    }
+# }
+# recipe1{ .......
+@api.route('/getRecipes', methods=['GET', 'POST'])
+def getRecipes():
+    recipesMatch = findRecipesByIngredientsNames(['מלח דק', 'שום'])
+    resDictArray = {}
+    for i, recipe in enumerate(recipesMatch):
+        resDictArray['recipe{}'.format(i)] = {
+            'imageLink': recipe.imageLink,
+            'image': recipe.link,
+            "ingredients": {'name{}'.format(j): ingredient.name for j, ingredient in
+                            enumerate(recipe.ingredients)},
+            "categories": {'name{}'.format(k): category.categoryName for k, category in
+                           enumerate(recipe.categories)},
+            'name': recipe.name
+        }
+
+    return jsonify(resDictArray)
+
+
 @api.route('/getdata', methods=['GET', 'POST'])
 def database():
-    # initTable()
-    #buildDB()
-
-    # x = Ingredient.query.filter_by(name= 'קנלוני' ).first()
-    x = findRecipesByIngredientsNames(['מלח דק', 'שום', 'שמן זית','גבינת מוצרלה'])
-
-    # user = Ingredient.query.filter((Ingredient.name == 'מלח גס')).first()
-
-    # x = Ingredient.query.filter((Ingredient.name == 'קנלוני'))
-
-    # ingreds = Ingredient.query.all()
-    # for ingredient in ingreds:
-    #     if ingredient.name == 'קנלוני':
-    #         x= ingredient.recipes1
-    #
-    # print(x)
-    # all_Ingredients = Ingredient.query.all()
-
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
 
