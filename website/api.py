@@ -126,17 +126,19 @@ def getIngredients():
 @api.route('/getRecipes', methods=['GET', 'POST'])
 def getRecipes():
     recipesMatch = findRecipesByIngredientsNames(['מלח דק', 'שום'])
-    resDictArray = {}
+    resDictArray = []
     for i, recipe in enumerate(recipesMatch):
-        resDictArray['recipe{}'.format(i)] = {
+        recipeToAdd = {'recipe': {
+            'recipeId': recipe.recipe_id,
             'imageLink': recipe.imageLink,
             'image': recipe.link,
-            "ingredients": {'name{}'.format(j): ingredient.name for j, ingredient in
-                            enumerate(recipe.ingredients)},
-            "categories": {'name{}'.format(k): category.categoryName for k, category in
-                           enumerate(recipe.categories)},
+            "ingredients": [ingredient.name for j, ingredient in
+                            enumerate(recipe.ingredients)],
+            "categories": [category.categoryName for k, category in
+                           enumerate(recipe.categories)],
             'name': recipe.name
-        }
+        }}
+        resDictArray.append(recipeToAdd)
 
     return jsonify(resDictArray)
 
