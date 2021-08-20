@@ -25,26 +25,28 @@ def buildDB():
     foodCategoriesSection = soup.find('section', class_='details-container')
     allCategoriesLiTags = foodCategoriesSection.ul.findAll('li')
     for li in range(0, len(allCategoriesLiTags)):
-        image = allCategoriesLiTags[li].a.img['src']
-        scrapRecipesLinksFromMainCategory(allCategoriesLiTags[li].a['href'], image)
+        scrapRecipesLinksFromMainCategory(allCategoriesLiTags[li].a['href'])
 
 
-def scrapRecipesLinksFromMainCategory(categoryLink, image):
+def scrapRecipesLinksFromMainCategory(categoryLink):
     recipesHtmlInfo = requests.get(categoryLink)
     soup = BeautifulSoup(recipesHtmlInfo.text, 'lxml')
 
     allRecipes = soup.find_all('div', class_='recipe-item feed-item')
+
     for i in range(0, len(allRecipes)):
         singleRecipe = allRecipes[i]
         singleRecipeHeader = singleRecipe.section
         singleRecipeLink = singleRecipeHeader.section.h2.a['href']
         singleRecipeName = singleRecipeHeader.section.h2.a.contents
+        recipeDescription = singleRecipeHeader.section.div.contents[0].rstrip().lstrip()
+        image = singleRecipe.a.img['data-foody-src']
         recipeName = singleRecipeName[0].rstrip().lstrip()
         exists = db.session.query(Recipe).filter_by(name=recipeName).first()
         if exists is not None:
             continue
         else:
-            newRecipe = Recipe(name=recipeName, link=singleRecipeLink, imageLink=image)
+            newRecipe = Recipe(name=recipeName, link=singleRecipeLink, imageLink=image, description=recipeDescription)
             db.session.add(newRecipe)
             db.session.commit()
             ingreds = scrapRecipeData(singleRecipeLink)
@@ -109,7 +111,7 @@ def getIngredients():
 
 # The function returns json object of Recipes after Match :
 # json example:
-# recipe0 {
+# recipe {
 #     'name' : 'מתכון להכנת פיצה'
 #     'link' : 'link for foody website recipe
 #     'imageLink : 'link for image'
@@ -131,12 +133,36 @@ def getRecipes():
         recipeToAdd = {'recipe': {
             'recipeId': recipe.recipe_id,
             'imageLink': recipe.imageLink,
-            'image': recipe.link,
+            'link': recipe.link,
             "ingredients": [ingredient.name for j, ingredient in
                             enumerate(recipe.ingredients)],
             "categories": [category.categoryName for k, category in
                            enumerate(recipe.categories)],
-            'name': recipe.name
+            'name': recipe.name,
+            'description': recipe.description
+
+        }}
+        resDictArray.append(recipeToAdd)
+
+    return jsonify(resDictArray)
+
+
+@api.route('/getRecipesByCategory', methods=['GET', 'POST'])
+def getRecipesByCategory():
+    recipesMatch = findRecipesBycategories(['ארוחה זולה'])
+    resDictArray = []
+    for i, recipe in enumerate(recipesMatch):
+        recipeToAdd = {'recipe': {
+            'recipeId': recipe.recipe_id,
+            'imageLink': recipe.imageLink,
+            'link': recipe.link,
+            "ingredients": [ingredient.name for j, ingredient in
+                            enumerate(recipe.ingredients)],
+            "categories": [category.categoryName for k, category in
+                           enumerate(recipe.categories)],
+            'name': recipe.name,
+            'description': recipe.description
+
         }}
         resDictArray.append(recipeToAdd)
 
@@ -145,6 +171,7 @@ def getRecipes():
 
 @api.route('/getdata', methods=['GET', 'POST'])
 def database():
+    # buildDB()
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
 
@@ -157,6 +184,23 @@ def findRecipesByIngredientsNames(IngredientsArr):
         setList = setList.intersection(set(ingredient.recipes1))
 
     return setList
+
+
+def findRecipesBycategories(categoriesArr):
+    y = Category.query.filter_by(categoryName=(categoriesArr[0])).first()
+    setList = set(y.recipes1)
+    for i in range(1, len(categoriesArr)):
+        category = Category.query.filter_by(name=categoriesArr[i]).first()
+        setList = setList.intersection(set(category.recipes1))
+
+    return setList
+
+
+def findRecipesByCategoriesAndIngredients(IngredientsArr, categoriesArr):
+    setOfRecipesByCategory = findRecipesBycategories(categoriesArr)
+    setOfRecipesByIngredients = findRecipesByIngredientsNames(IngredientsArr)
+    resSet = setOfRecipesByCategory.intersection(setOfRecipesByIngredients)
+    return resSet
 
 
 def initTable():
