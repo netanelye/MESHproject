@@ -48,6 +48,7 @@ class Recipe(db.Model):
                                  backref=db.backref('recipes', lazy='dynamic'))
     link = db.Column(db.String(3000))
     imageLink = db.Column(db.String(3000))
+    description = db.Column(db.String(20000))
 
 
 # category = db.column(db.String(150))
@@ -65,6 +66,8 @@ class Category(db.Model):
     __tablename__ = 'Category'
     Category_id = db.Column(db.Integer, primary_key=True)
     categoryName = db.Column(db.String(150))
+    recipes1 = db.relationship('Recipe', secondary=Recipe_Category,
+                                  backref=db.backref('Categories', lazy='dynamic'))
 
 # @event.listens_for(Recipe.__table__, 'after_create')
 # def create_departments(*args, **kwargs):
