@@ -14,35 +14,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Tags() {
+export default function Tags(props) {
   const classes = useStyles();
 
-  const [items, setItems] = React.useState(null)
+  // const [items, setItems] = React.useState(null)
 
   const handleChange = (event, value) => {
-    setItems(value);
-    console.log(items);
+    props.setItems(value);
+    console.log(value);
   }
 
   return (
-    <div className={classes.root}>
-      <Autocomplete
+        <Autocomplete
         multiple
-        id="tags-filled"
-        options={top100Films.map((option) => option.title)}
-        defaultValue={[top100Films[13].title]}
-        freeSolo
+        id="tags-outlined"
+        options={ingredients.map(ing=>({title:ing}))}
+        getOptionLabel={(option) => option.title}
+        defaultValue={[{title:ingredients[0]}]}
+        filterSelectedOptions
         onChange={handleChange}
-        renderTags={(value, getTagProps) =>
-          value.map((option, index) => (
-            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-          ))
+        renderInput={(params) => {
+        return <TextField
+            {...params}
+            variant="outlined"
+            label=""
+            placeholder="Favorites"
+          />
         }
-        renderInput={(params) => (
-          <TextField {...params} variant="filled" label="בחר/י פריט" placeholder="Favorites" />
-        )}
+          
+        }
       />
-    </div>
+      
   );
 }
 
@@ -149,3 +151,33 @@ const top100Films = [
   { title: '3 Idiots', year: 2009 },
   { title: 'Monty Python and the Holy Grail', year: 1975 },
 ];
+
+const ingredients =[
+  "בשר בקר טחון", 
+  "בצל", 
+  "שום", 
+  "פטרוזיליה", 
+  "כוסברה", 
+  "חזה עוף שלם", 
+  "לחם אחיד", 
+  "פפריקה מתוקה", 
+  "קינמון טחון", 
+  "בהרט", 
+  "אבקת מרק עוף", 
+  "כורכום", 
+  "מלח דק", 
+  "פלפל שחור טחון", 
+  "שמן קנולה", 
+  "ביצה", 
+  "תפוחי אדמה לאפייה ובישול של הדוד משה", 
+  "קמח לבן", 
+  "רסק עגבניות", 
+  "עגבניות מרוסקות", 
+  "פלפל שחור גרוס", 
+  "אבקת מרק ירקות", 
+  "מים רותחים"
+]
+
+const defaultValue = [
+  { title: 'בצל'}
+]

@@ -33,24 +33,22 @@ const Navigation = () => {
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <div className={classes.appBarDivAligner} ></div>
-                    
-                    {/* <Typography color='inherit' component='h1' variant='h6'> מֶש  </Typography> */}
-                    
-                    <IconButton onClick={toggleNavigation} edge='start' color='inherit' aria-label='Menu' marginRight={theme.spacing(2)}>
+                    {/* <IconButton onClick={toggleNavigation} edge='end' color='inherit' aria-label='Menu' marginRight={theme.spacing(2)}>
                         <MenuTwoToneIcon/>
                     </IconButton>
-                   
+                    */}
                 </Toolbar>
             </AppBar>
 
-           <Drawer variant={matches ? 'temporary' : 'permanent'} anchor="right" open={open} 
+           <Drawer variant={/*matches ? 'temporary' :*/ 'permanent'} anchor="right" open={open} 
                 classes={{ paper: clsx(classes.navigationDrawer, !open&&classes.navigationDrawerCollapse )}}>
 
-                <div className={clsx(classes.navigationToolbar, !open && classes.navigationToolbarCollapse)}>
+                {/* <div className={clsx(classes.navigationToolbar, !open && classes.navigationToolbarCollapse)}> */}
+                {/* <div className={clsx(classes.navigationToolbar, !open && classes.navigationToolbarCollapse)}>
                     <IconButton onClick={toggleNavigation}>
                         { open ? <ChevronRightTwoToneIcon/> : <MenuOpenRoundedIcon/>}
                     </IconButton>
-                </div>
+                </div> */}
                 
                 <div className={classes.navigationLogoContainer}>
                     <img className={classes.navigationLogo} src={ MeshLogo }/>
