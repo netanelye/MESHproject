@@ -21,9 +21,9 @@ import { Link } from 'react-router-dom';
 
 
 const Recipe = (props) => {
-const localRecipe = props.recipe.recipe;
-  console.log(props.recipe.name)
-  console.log(props.recipe)
+const localRecipe = props.recipe;
+  console.log(localRecipe)
+  console.log(localRecipe.recipeId)
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -71,7 +71,7 @@ const localRecipe = props.recipe.recipe;
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-        {/* /* <Typography paragraph>Method:</Typography> */}
+        {/* /* <Typography paragraph>Method:</Typography>
           {localRecipe.steps.map( (step, index) => { 
               if (index < 4) {
 
@@ -86,7 +86,8 @@ const localRecipe = props.recipe.recipe;
           })}
 
 
-          
+           */}
+           <Typography> {localRecipe.description}</Typography>
         </CardContent>
       </Collapse>
     </Card>

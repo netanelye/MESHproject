@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from . import db
 from .models import Recipe, Ingredient, Category, Recipe_Ingredient
 from flask_login import current_user
@@ -105,7 +105,7 @@ def scrapRecipeCategories(recipeLink):
 # The function returns json object of Ingredients : {'name1: 'onion', 'name2':'carrot'}
 @api.route('/getIngredientList', methods=['GET', 'POST'])
 def getIngredients():
-    ingredientsArr = {'name{}'.format(j): ingredient.name for j, ingredient in enumerate(Ingredient.query.all())}
+    ingredientsArr = [ingredient.name for j, ingredient in enumerate(Ingredient.query.all())]
     return jsonify(ingredientsArr)
 
 
@@ -125,12 +125,31 @@ def getIngredients():
 #                    }
 # }
 # recipe1{ .......
+
 @api.route('/getRecipes', methods=['GET', 'POST'])
 def getRecipes():
-    recipesMatch = findRecipesByIngredientsNames(['מלח דק', 'שום'])
+    # print("date = " + request.get_data())
+    #print(str(request.get_json()))
+    # if request.method == 'GET':
+    # temp = json.load(request.data)
+    # print("###############################################################" + str(temp))
+    ingredients = request.get_json(force=True)
+    print("###############################" + str(ingredients))
+    # print("###############################" + type(ingredients))
+    print(type(ingredients))
+
+    print("###############################" + str(ingredients.get("ingredients")))
+
+    arr = []
+    for singleIngredient in ingredients.get("ingredients"):
+        arr.append(singleIngredient.get('title'))
+    
+    print(arr)
+
+    recipesMatch = findRecipesByIngredientsNames(arr)
     resDictArray = []
     for i, recipe in enumerate(recipesMatch):
-        recipeToAdd = {'recipe': {
+        recipeToAdd =  {
             'recipeId': recipe.recipe_id,
             'imageLink': recipe.imageLink,
             'link': recipe.link,
@@ -140,11 +159,10 @@ def getRecipes():
                            enumerate(recipe.categories)],
             'name': recipe.name,
             'description': recipe.description
-
-        }}
-        resDictArray.append(recipeToAdd)
-
-    return jsonify(resDictArray)
+        }
+        resDictArray.append((recipeToAdd))
+    # print(jsonify(json.dumps(recipeToAdd,ensure_ascii=False).encode('utf8').decode()))
+    return (json.dumps(resDictArray,ensure_ascii=False).encode('utf8').decode())
 
 
 @api.route('/getRecipesByCategory', methods=['GET', 'POST'])

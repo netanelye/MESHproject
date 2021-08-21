@@ -76,7 +76,8 @@ recipeRoot: {
         whiteSpace: 'nowrap',
         overflowX: 'hidden',
         //position: 'relative',
-        height: '100vh'
+        height: '100vh',
+        background: 'red'
     },
     navigationDrawerCollapse: {
         width: theme.spacing(9),
