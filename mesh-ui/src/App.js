@@ -6,8 +6,10 @@ import Favorites from "../src/pages/Favorites";
 import Personal from "../src/pages/Personal";
 import { useStyles } from "./styles/styles";
 import Layout from "./components/Layout";
-import { Container } from "@material-ui/core";
+import { Container, Paper } from "@material-ui/core";
 import "./App.css";
+import Navigation2 from "./components/Navigation2";
+// import Image from "../assets/background5.jpg";
 
 const App = () => {
   const classes = useStyles();
@@ -33,13 +35,17 @@ const App = () => {
     setPreference(JSON.parse(retrievedObject));
   }, []);
 
+  
   return (
     <div className="App">
-      <Router>
-        <Layout>
-          <Navigation />
+      
+      <div className={classes.background}>
+      {/* <div> */}
+        <Router>
 
-          <div style={{ marginTop: "5%", width: "70%", marginRight: "22%" }}>
+          <Navigation2 />
+
+          <div style={{ marginTop: "0%", width: "70%", marginRight: "15%" }}>
             <Switch>
               <Route exact key="0" path="/">
                 {" "}
@@ -60,8 +66,10 @@ const App = () => {
               </Route>
             </Switch>
           </div>
-        </Layout>
-      </Router>
+
+        </Router>
+      </div>
+
     </div>
   );
 };

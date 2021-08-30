@@ -8,8 +8,8 @@ import Recipe from './Recipe'
 
 const RecipieList = (props) => {
 
-    console.log(props.recipes)
-    console.log(props.recipes[0])
+    // console.log(props.recipes)
+    // console.log(props.recipes[0])
     return (
         <Container>
 

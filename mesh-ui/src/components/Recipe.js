@@ -18,6 +18,12 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MeshLogo from '../assets/mesh.jpeg'
 import { useStyles } from '../styles/styles';
 import { Link } from 'react-router-dom';
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  ThemeProvider,
+} from "@material-ui/core/styles";
+
 
 
 const Recipe = (props) => {
@@ -32,24 +38,33 @@ const localRecipe = props.recipe;
     setExpanded(!expanded);
   };
 
+  const theme = createMuiTheme({
+    typography: {
+      fontFamily: [
+        'Rubik',
+      ].join(','),
+    },});
+
 
   return (
+    <MuiThemeProvider theme={theme}>
     <Card className={classes.recipeRoot}>
       <CardHeader
+       avatar={
+         <Avatar aria-label="recipe" className={classes.avatar}>
+          מֶש
+        </Avatar>
+        }
+        titleTypographyProps={{variant:'h5'}}
         title={localRecipe.name}
         subheader=""
-      />
+        />
       <CardMedia align='center'
         className={classes.recipeMedia}
-        
-        title="Paella dish"
-      >
-        <img src={localRecipe.imageLink}/>
+        title=""
+        >
+        <img className={classes.recipeImage} src={localRecipe.imageLink}/>
       </CardMedia>
-      <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-        </Typography>
-      </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />
@@ -65,32 +80,17 @@ const localRecipe = props.recipe;
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
-        >
+          >
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-        {/* /* <Typography paragraph>Method:</Typography>
-          {localRecipe.steps.map( (step, index) => { 
-              if (index < 4) {
-
-               return <Typography paragraph>
-              {step}
-            </Typography>
-          } else if ( index == 4 ) 
-          return <Typography paragraph>
-          ...
-        </Typography>
-        else return null;
-          })}
-
-
-           */}
            <Typography> {localRecipe.description}</Typography>
         </CardContent>
       </Collapse>
     </Card>
+  </MuiThemeProvider>
   );
 }
 

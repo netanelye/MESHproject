@@ -1,12 +1,35 @@
 import { makeStyles } from "@material-ui/core"
 import { TheatersOutlined } from "@material-ui/icons";
-
+import { fontFamily } from "@material-ui/system";
+import Image from "../assets/white2.jpg";
+import ButtomImage from  "../assets/btn.jpg";
+import MeshButton from "../components/MeshButton";
 export const useStyles = makeStyles( (theme) => ({
 
-    navigationHeader: {
-        width: '80%',
-        // display: 'flex',
-        align: 'center'
+    recipeImage: {
+        width:'100%'
+    },
+
+    meshButton: {
+        width: '300px',
+        height: '100px',
+        background: '#5F8FE8',
+        backgroundImage: `url(${ButtomImage})`,
+    },
+
+    background: {
+        // minHeight: '100vh',
+        // backgroundImage: `url(${Image})`,
+        // backgroundRepeat: 'no-repeat',
+        // backgroundSize: 'cover',
+        // backgroundAttachment:'fixed',
+        backgroundColor:" #f0f5f5"
+      },
+
+navigationHeader: {
+    width: '80%',
+    // display: 'flex',
+    align: 'center'
     },
 
 // Recipe 
@@ -14,10 +37,13 @@ export const useStyles = makeStyles( (theme) => ({
 recipeRoot: {
     maxWidth: 700,
     backgroundColor: "#E8D5F4",
+    borderRadius: 50,
   },
   receipeMedia: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
+    paddingTop: '75%', // 16:9
+    borderRadius: 50,
+
   },
   recipeExpand: {
     transform: 'rotate(0deg)',
@@ -38,7 +64,8 @@ recipeRoot: {
     pageGrid: {
         height: '100%',
         minHeight:'100vh',
-        background: "#F3E9F9"
+        background: "#f0ede9",
+        backgroundColor: 'rgba(188, 150, 233, 0.05)',
     },
 
 // Home Page:
@@ -47,7 +74,7 @@ recipeRoot: {
         width: '100%',
     },
     homeRoot: {
-        background: "#F3E9F9"
+        background: "#f0ede9"
     },
 
 
@@ -55,15 +82,8 @@ recipeRoot: {
 //App Bar
     appBar: {
         backgroundColor:'#735AA2',
-        // [theme.breakpoints.up('sm')] : {
-        //     display: 'none'
-        // }
     },
     appBarSpacer: {
-        // [theme.breakpoints.down('xs')]: {
-        //     ...theme.mixins.toolbar,
-        // }
-        // toolbar: theme.mixin.toolbar,
     },
     appBarDivAligner : {
         flex : 1
@@ -71,13 +91,14 @@ recipeRoot: {
     
 // Navigation Drawer 
     navigationDrawer: {
+        marginTop:'0%',
         width: 240,
         border: 'none',
         whiteSpace: 'nowrap',
         overflowX: 'hidden',
         //position: 'relative',
         height: '100vh',
-        background: 'red'
+        background: '#A16BE1'
     },
     navigationDrawerCollapse: {
         width: theme.spacing(9),

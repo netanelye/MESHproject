@@ -11,9 +11,10 @@ import CommentIcon from "@material-ui/icons/Comment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
+    width: "80%",
+    //  maxWidth: 240,
+    backgroundColor: "#E8D5F4",
+    borderRadius: 50
   },
 }));
 
@@ -57,7 +58,9 @@ export default function CheckboxList(props) {
             button
             onClick={handleToggle(value)}
           >
-            <ListItemIcon>
+           
+            <ListItemText style={{fontSize:'2', display:'flex', justifyContent:'center'}} id={labelId} primary={value} />
+            <ListItemIcon style={{display:'flex', justifyContent:'center'}} >
               <Checkbox
                 edge="start"
                 checked={checked.indexOf(value) !== -1}
@@ -66,10 +69,8 @@ export default function CheckboxList(props) {
                 inputProps={{ "aria-labelledby": labelId }}
               />
             </ListItemIcon>
-            <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
-            <ListItemSecondaryAction>
+            <ListItemSecondaryAction alignItemsFlexStart>
               <IconButton edge="end" aria-label="comments">
-                <CommentIcon />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
