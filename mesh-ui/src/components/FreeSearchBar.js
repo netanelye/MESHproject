@@ -19,8 +19,9 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
   },
   margin: {
-    margin: theme.spacing(1),
-    width: 500
+   // margin: theme.spacing(1),
+     width: '70%',
+
   },
   withoutLabel: {
     marginTop: theme.spacing(3),
@@ -30,41 +31,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InputAdornments() {
+export default function InputAdornments(props) {
   const classes = useStyles();
-  const [values, setValues] = React.useState({
-    amount: '',
-    password: '',
-    weight: '',
-    weightRange: '',
-    showPassword: false,
-  });
+  const [value, setValue] = React.useState()
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
+  // const handleChange = (prop) => (event) => {
+  //   setValues({ ...values, [prop]: event.target.value });
+  // };
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
+  // const handleClickShowPassword = () => {
+  //   setValues({ ...values, showPassword: !values.showPassword });
+  // };
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  // const handleMouseDownPassword = (event) => {
+  //   event.preventDefault();
+  // };
 
   return (
-    <div className={classes.root}>
+    
    <div>
-        <FormControl fullWidth className={classes.margin} variant="filled">
-          <InputLabel htmlFor="filled-adornment-amount">חפש/י מה בא לך</InputLabel>
-          <FilledInput
-            id="filled-adornment-amount"
-            value={values.amount}
-            onChange={handleChange('amount')}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+   <FormControl style={{marginTop:'10%'}} fullWidth className={classes.margin} variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-amount">חיפוש חופשי</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-amount"
+            value={value}
+            onChange={(e)=>props.setFreeSearchValue(e.target.value)}
+            startAdornment={<InputAdornment position="start"></InputAdornment>}
+            labelWidth={60}
           />
         </FormControl>
       </div>
-    </div>
+    
   );
 }
