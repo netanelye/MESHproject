@@ -121,6 +121,15 @@ export default function PersistentDrawerRight() {
               
             />
           </React.Fragment>
+
+          <React.Fragment>
+            <MenuItem
+              lable={open ? "קצת עלינו" : ""}
+              icon={<StarTwoToneIcon />}
+              path="/about"
+              
+            />
+          </React.Fragment>
         </List>
       </Drawer>
     </div>

@@ -28,7 +28,7 @@ const Home = (props) => {
 
   const [isFreeOrNot, setIsFreeOrNot] = useState(false);
 
-  const [items, setItems] = useState();
+  const [items, setItems] = useState([]);
 
   const [categories, setCategories] = useState();
 

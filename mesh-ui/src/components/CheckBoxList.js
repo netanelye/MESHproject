@@ -59,7 +59,7 @@ export default function CheckboxList(props) {
             onClick={handleToggle(value)}
           >
            
-            <ListItemText style={{fontSize:'2', display:'flex', justifyContent:'center'}} id={labelId} primary={value} />
+            <ListItemText style={{display:'flex', justifyContent:'center'}} id={labelId} primary={value} />
             <ListItemIcon style={{display:'flex', justifyContent:'center'}} >
               <Checkbox
                 edge="start"

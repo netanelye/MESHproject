@@ -9,7 +9,7 @@ import Layout from "./components/Layout";
 import { Container, Paper } from "@material-ui/core";
 import "./App.css";
 import Navigation2 from "./components/Navigation2";
-// import Image from "../assets/background5.jpg";
+import About from "./pages/About";
 
 const App = () => {
   const classes = useStyles();
@@ -28,6 +28,8 @@ const App = () => {
     localStorage.setItem("Preference", JSON.stringify(newPreference));
   };
 
+  const [favorites, setfavorites] = useState([]);
+  
   useEffect(() => {
     let retrievedObject = localStorage.getItem("Categories");
     setCategories(JSON.parse(retrievedObject));
@@ -40,13 +42,13 @@ const App = () => {
     <div className="App">
       
       <div className={classes.background}>
-      {/* <div> */}
         <Router>
 
           <Navigation2 />
 
           <div style={{ marginTop: "0%", width: "70%", marginRight: "15%" }}>
             <Switch>
+
               <Route exact key="0" path="/">
                 {" "}
                 <Home categories={categories} preference={preference} />{" "}
@@ -62,8 +64,13 @@ const App = () => {
               </Route>
               <Route exact key="2" path="/favorites">
                 {" "}
-                <Favorites />{" "}
+                <Favorites favorites={favorites}/>{" "}
               </Route>
+              <Route exact key="3" path="/about">
+                {" "}
+                <About />{" "}
+              </Route>
+
             </Switch>
           </div>
 

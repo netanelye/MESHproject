@@ -89,7 +89,7 @@ export default function Tags(props) {
       id="tags-outlined"
       options={ingredients.map((ing) => ({ title: ing }))}
       getOptionLabel={(option) => option.title}
-      defaultValue={[{ title: ingredients[0] }]}
+      // defaultValue={[{ title: ingredients[0]}]}
       filterSelectedOptions
       onChange={handleChange}
       classes={classes}

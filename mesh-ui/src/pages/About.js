@@ -15,7 +15,7 @@ import RecipeList from "../components/RecipieList";
 import RecipieList from "../components/RecipieList";
 import { useEffect, useState } from "react";
 
-const Favorites = (props) => {
+const About = (props) => {
   console.log(props.categories);
   const classes = useStyles();
 
@@ -30,17 +30,6 @@ const Favorites = (props) => {
       fontFamily: ["Rubik"].join(","),
     },
   });
-
-  const [recipes, setRecipes] = useState([]);
-
-  
-
-  useEffect(() => {
-    axios.post("/api/getRecommended").then((res) => {
-      console.log("on GETRECOMMENDED  = " + res.data);
-      setRecipes(res.data);
-    });
-  }, recipes != [])
 
   return (
     <Grid
@@ -59,19 +48,25 @@ const Favorites = (props) => {
               fontSize={46}
               letterSpacing={3}
             >
-              המומלצים שלנו
-            </Box>
+עם התפתחות עולם הבישול הביתי, במיוחד בתקופת הסגרים והמגבלות על מסעדות, ומתוך
+שאיפה לגיוון קולינרי, חל גידול משמעותי בחיפוש מתכונים באמצעות האינטרנט.
+הנחנו שיציאה מהבית למכולת עלולה להיות לא חופשית כבעבר, ומכאן שאתרי המתכונים
+ה"מסורתיים" יאבדו מיעילותם. במילים אחרות, אנשים שהיו נוהגים לרכוש מוצרי מזון על בסיס מתכון
+מסוים לא יוכלו לעשות זאת.
+מטרתנו להקים אפליקציה שתעבוד בכיוון ההפוך - הזנת מצרכים הזמינים בנקודת
+זמן נתונה בבית וקבלת רשימת מתכונים המכוונת למצרכים אלה.
+
+האפליקציה פותחה במסגרת סדנת "יישומי רשת" בהנחיית אמיר קירש
+בשנת הלימודים תשפ"א-2021
+
+נשמח לשמוע מכם:
+נתנאל ירושלמי - netanelye@mta.ac.il  
+          </Box>
           </Typography>
         </ThemeProvider>
-        <Divider variant="fullWidth" light />
-      </Grid>
-      <Grid flex>
-        <Container>
-          <RecipieList recipes={recipes}></RecipieList>
-        </Container>
       </Grid>
     </Grid>
   );
 };
 
-export default Favorites;
+export default About;
