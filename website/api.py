@@ -9,8 +9,7 @@ from bs4 import BeautifulSoup
 import lxml
 import requests
 
-foodyCategoriesLinkPath = 'https://foody.co.il/category/%d7%9e%d7%aa%d7%9b%d7%95%d7%a0%d7%99-%d7%a2%d7%9e%d7%99%d7%9d' \
-                          '-%d7%95%d7%a2%d7%93%d7%95%d7%aa/ '
+foodyCategoriesLinkPath = 'https://foody.co.il/category/%d7%90%d7%a8%d7%95%d7%97%d7%95%d7%aa/%d7%90%d7%a8%d7%95%d7%97%d7%94-%d7%93%d7%99%d7%90%d7%98%d7%98%d7%99%d7%aa/'
 foodySubCategoryRecipesLinksPath = 'https://foody.co.il/category/%D7%9E%D7%AA%D7%9B%D7%95%D7%A0%D7%99-%D7%A2%D7%9E%D7' \
                                    '%99%D7%9D-%D7%95%D7%A2%D7%93%D7%95%D7%AA/%D7%90%D7%95%D7%9B%D7%9C-%D7%90%D7%99%D7' \
                                    '%98%D7%9C%D7%A7%D7%99/?page=10 '
@@ -189,7 +188,7 @@ def getRecipesByCategory():
 
 @api.route('/getdata', methods=['GET', 'POST'])
 def database():
-    # buildDB()
+    buildDB()
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
 
