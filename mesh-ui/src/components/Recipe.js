@@ -10,6 +10,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import { red } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
@@ -38,6 +39,9 @@ const localRecipe = props.recipe;
     setExpanded(!expanded);
   };
 
+ const match = {
+   matchP: props.recipe.matchPrecentage
+ }
   const theme = createMuiTheme({
     typography: {
       fontFamily: [
@@ -50,14 +54,8 @@ const localRecipe = props.recipe;
     <MuiThemeProvider theme={theme}>
     <Card className={classes.recipeRoot}>
       <CardHeader
-       avatar={
-         <Avatar aria-label="recipe" className={classes.avatar}>
-          מֶש
-        </Avatar>
-        }
         titleTypographyProps={{variant:'h5'}}
         title={localRecipe.name}
-        subheader=""
         />
       <CardMedia align='center'
         className={classes.recipeMedia}
@@ -65,12 +63,15 @@ const localRecipe = props.recipe;
         >
         <img className={classes.recipeImage} src={localRecipe.imageLink}/>
       </CardMedia>
+      <CardContent>
+        <Typography variant="body2" color="textSecondary" component="p">
+            {match.matchP}
+        </Typography>
+      </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
         <IconButton aria-label="share" onClick={()=>window.open(localRecipe.link)}>
-          <ShareIcon >
+          <ShareIcon>
+            למעבר למתכון המלא
           </ShareIcon>
         </IconButton>
         <IconButton
@@ -86,7 +87,12 @@ const localRecipe = props.recipe;
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-           <Typography> {localRecipe.description}</Typography>
+
+           <Typography>
+             <Box>
+              {localRecipe.description}
+             </Box>
+             </Typography>
         </CardContent>
       </Collapse>
     </Card>

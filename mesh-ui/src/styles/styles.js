@@ -36,6 +36,7 @@ navigationHeader: {
 
 recipeRoot: {
     maxWidth: 700,
+    // maxHeight:450,
     backgroundColor: "#E8D5F4",
     borderRadius: 50,
   },
