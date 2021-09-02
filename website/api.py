@@ -1,10 +1,8 @@
 import json
-
 from flask import Blueprint, render_template, jsonify, request
 from . import db
 from .models import Recipe, Ingredient, Category, Recipe_Ingredient
 from flask_login import current_user
-
 from bs4 import BeautifulSoup
 import lxml
 import requests
@@ -73,11 +71,6 @@ def scrapRecipesLinksFromMainCategory(categoryLink):
                 Category1.recipes.append(newRecipe)
                 db.session.commit()
 
-        # if i == 5:
-        #     break
-
-        # print("     #### RECIPE NUMBER " + str(i) + " ####\n ")
-
 
 def scrapRecipeData(recipeLink):
     ingredients = []
@@ -108,46 +101,59 @@ def getIngredients():
     ingredientsArr = [ingredient.name for j, ingredient in enumerate(Ingredient.query.all())]
     return jsonify(ingredientsArr)
 
+@api.route('/getRecommended', methods=['GET', 'POST'])
+def getRecommended():
+    y = Ingredient.query.filter_by(name='מלח דק').first()
+    recList = y.recipes1
+    retArr = []
+    resDictArray =[]
+    for i, recipe in enumerate(recList):
+        retArr.append(recipe)
+        if i == 15:
+            break
+    for i, recipe in enumerate(retArr):
+        recipeToAdd =  {
+            'recipeId': recipe.recipe_id,
+            'imageLink': recipe.imageLink,
+            'link': recipe.link,
+            "ingredients": [ingredient.name for j, ingredient in
+                            enumerate(recipe.ingredients)],
+            "categories": [category.categoryName for k, category in
+                           enumerate(recipe.categories)],
+            'name': recipe.name,
+            'description': recipe.description,
 
-# The function returns json object of Recipes after Match :
-# json example:
-# recipe {
-#     'name' : 'מתכון להכנת פיצה'
-#     'link' : 'link for foody website recipe
-#     'imageLink : 'link for image'
-#     'ingredients' : {
-#                       'name0' : 'onion'
-#                       'name1' : 'salt'
-#                     }
-#     'categories' : {
-#                       'name0' : 'kosher'
-#                       'name1' : 'vegan'
-#                    }
-# }
-# recipe1{ .......
+        }
+        resDictArray.append(recipeToAdd)
+
+    return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
+
 
 @api.route('/getRecipes', methods=['GET', 'POST'])
 def getRecipes():
-    # print("date = " + request.get_data())
-    #print(str(request.get_json()))
-    # if request.method == 'GET':
-    # temp = json.load(request.data)
-    # print("###############################################################" + str(temp))
     ingredients = request.get_json(force=True)
-    print("###############################" + str(ingredients))
-    # print("###############################" + type(ingredients))
-    print(type(ingredients))
+    ingredientsArr = []
+    categoriesArr = []
 
-    print("###############################" + str(ingredients.get("ingredients")))
+    if len(ingredients.get("ingredients")) ==  0:
+        return (json.dumps(ingredientsArr))
 
-    arr = []
     for singleIngredient in ingredients.get("ingredients"):
-        arr.append(singleIngredient.get('title'))
-    
-    print(arr)
+        ingredientsArr.append(singleIngredient.get('title'))  
 
-    recipesMatch = findRecipesByIngredientsNames(arr)
+    for category in ingredients.get("categories"):
+        categoriesArr.append(category) 
+
+    ingredientsArr = sortIngredients(ingredientsArr)
+    recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr, categoriesArr)
+    arrLength = len(ingredientsArr)
+    matchCounter = 0
+    while len(recipesMatch) <= 10:
+        ingredientsArr.pop()
+        matchCounter = matchCounter + 1
+        recipesMatch.union(findRecipesByIngredientsNames(ingredientsArr))
     resDictArray = []
+    
     for i, recipe in enumerate(recipesMatch):
         recipeToAdd =  {
             'recipeId': recipe.recipe_id,
@@ -158,10 +164,13 @@ def getRecipes():
             "categories": [category.categoryName for k, category in
                            enumerate(recipe.categories)],
             'name': recipe.name,
-            'description': recipe.description
+            'description': recipe.description,
+            'match number': ((arrLength - matchCounter) * 100) / arrLength
         }
         resDictArray.append((recipeToAdd))
-    # print(jsonify(json.dumps(recipeToAdd,ensure_ascii=False).encode('utf8').decode()))
+        if i == 20:
+            break
+
     return (json.dumps(resDictArray,ensure_ascii=False).encode('utf8').decode())
 
 
@@ -208,19 +217,71 @@ def findRecipesBycategories(categoriesArr):
     y = Category.query.filter_by(categoryName=(categoriesArr[0])).first()
     setList = set(y.recipes1)
     for i in range(1, len(categoriesArr)):
-        category = Category.query.filter_by(name=categoriesArr[i]).first()
+        category = Category.query.filter_by(categoryName=categoriesArr[i]).first()
         setList = setList.intersection(set(category.recipes1))
 
     return setList
 
 
 def findRecipesByCategoriesAndIngredients(IngredientsArr, categoriesArr):
-    setOfRecipesByCategory = findRecipesBycategories(categoriesArr)
+    categoriesArr = convertCategories(categoriesArr);
     setOfRecipesByIngredients = findRecipesByIngredientsNames(IngredientsArr)
-    resSet = setOfRecipesByCategory.intersection(setOfRecipesByIngredients)
-    return resSet
+
+    if len(categoriesArr) != 0:
+        setOfRecipesByCategory = findRecipesBycategories(categoriesArr)
+        return  setOfRecipesByCategory.intersection(setOfRecipesByIngredients)
+  
+    return setOfRecipesByIngredients
+
+def sortIngredients(IngredientsArr):
+    dict = {}
+    resList =[]
+    y = Ingredient.query.filter_by(name=IngredientsArr[0]).first()
+    num = len(y.recipes1)
+    dict[IngredientsArr[0]] = num
+
+    for i in range(1, len(IngredientsArr)):
+        y = Ingredient.query.filter_by(name=IngredientsArr[i]).first()
+        num = len(y.recipes1)
+        dict[IngredientsArr[i]] = num
+    sort_orders = sorted(dict.items(), key=lambda x: x[1], reverse=True)
+
+    for name in sort_orders:
+        resList.append(name[0])
+
+    return resList
 
 
+def convertCategories(arr):
+    resArr = []
+    categoryMap = {'משהו לבוהוריים': 'בראנץ',
+                   'משהו חגיגי': 'ארוחה חגיגית',
+                   'משהו מהיר': 'ארוחה מהירה',
+                   'משהו לשישי': 'ארוחת שישי בערב',
+                   'משהו מושחת': 'ארוחה מושחתת',
+                   'משהו מתוק': 'קינוחים',
+                   'משהו בריא': 'ארוחה בריאה',
+                   'משהו איטלקי': 'אוכל איטלקי',
+                   'משהו מרוקאי': 'אוכל מרוקאי',
+                   'משהו אמריקאי': 'אוכל אמריקאי',
+                   'משהו בלקני': 'אוכל בלקני',
+                   'משהו תאילנדי': 'אוכל תאילנדי',
+                   'משהו תימני': 'אוכל תימני',
+                   'בשרי': 'ארוחה בשרית',
+                   'חלבי': 'ארוחה חלבית',
+                   'צמחוני': 'מתכונים צמחוניים',
+                   'טבעוני': 'מתכונים טבעוניים',
+                   'כשר': '',
+                   'ללא גלוטן': 'מתכונים ללא גלוטן',
+                   'ללא לקטוז': 'מתכונים ללא לקטוז',
+                   }
+
+    for category in arr:
+        resArr.append(categoryMap[category])
+    
+    return resArr
+
+    
 def initTable():
     recipe1 = Recipe(name='pizza')
     recipe2 = Recipe(name='burger')
@@ -245,3 +306,5 @@ def initTable():
     ingredient3.recipes.append(recipe3)
     ingredient3.recipes.append(recipe3)
     db.session.commit()
+
+
