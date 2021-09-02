@@ -65,14 +65,14 @@ const localRecipe = props.recipe;
       </CardMedia>
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
-            {match.matchP}
+          {localRecipe.matchPrecentage}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="share" onClick={()=>window.open(localRecipe.link)}>
           <ShareIcon>
-            למעבר למתכון המלא
           </ShareIcon>
+
         </IconButton>
         <IconButton
           className={clsx(classes.recipeExpand, {
