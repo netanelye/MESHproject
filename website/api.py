@@ -100,18 +100,19 @@ def getIngredients():
     ingredientsArr = [ingredient.name for j, ingredient in enumerate(Ingredient.query.all())]
     return jsonify(ingredientsArr)
 
+
 @api.route('/getRecommended', methods=['GET', 'POST'])
 def getRecommended():
     y = Ingredient.query.filter_by(name='מלח דק').first()
     recList = y.recipes1
     retArr = []
-    resDictArray =[]
+    resDictArray = []
     for i, recipe in enumerate(recList):
         retArr.append(recipe)
         if i == 15:
             break
     for i, recipe in enumerate(retArr):
-        recipeToAdd =  {
+        recipeToAdd = {
             'recipeId': recipe.recipe_id,
             'imageLink': recipe.imageLink,
             'link': recipe.link,
@@ -134,43 +135,44 @@ def getRecipes():
     ingredientsArr = []
     categoriesArr = []
 
-    if len(ingredients.get("ingredients")) ==  0:
-        return (json.dumps(ingredientsArr))
+    if len(ingredients.get("ingredients")) == 0:
+        return json.dumps(ingredientsArr)
 
     for singleIngredient in ingredients.get("ingredients"):
-        ingredientsArr.append(singleIngredient.get('title'))  
+        ingredientsArr.append(singleIngredient.get('title'))
 
     for category in ingredients.get("categories"):
-        categoriesArr.append(category) 
+        categoriesArr.append(category)
 
     ingredientsArr = sortIngredients(ingredientsArr)
     recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr, categoriesArr)
     arrLength = len(ingredientsArr)
     matchCounter = 0
-    while len(recipesMatch) <= 10:
+
+    resDictArray = []
+    while len(recipesMatch) < 15 or len(ingredientsArr) != 0:
+        for i, recipe in enumerate(recipesMatch):
+            recipeToAdd = {
+                'recipeId': recipe.recipe_id,
+                'imageLink': recipe.imageLink,
+                'link': recipe.link,
+                "ingredients": [ingredient.name for j, ingredient in
+                                enumerate(recipe.ingredients)],
+                "categories": [category.categoryName for k, category in
+                               enumerate(recipe.categories)],
+                'name': recipe.name,
+                'description': recipe.description,
+                'match number': ((arrLength - matchCounter) * 100) / arrLength
+            }
+            resDictArray.append(recipeToAdd)
+            if len(resDictArray) == 15:
+                break
+
         ingredientsArr.pop()
         matchCounter = matchCounter + 1
-        recipesMatch.union(findRecipesByIngredientsNames(ingredientsArr))
-    resDictArray = []
-    
-    for i, recipe in enumerate(recipesMatch):
-        recipeToAdd =  {
-            'recipeId': recipe.recipe_id,
-            'imageLink': recipe.imageLink,
-            'link': recipe.link,
-            "ingredients": [ingredient.name for j, ingredient in
-                            enumerate(recipe.ingredients)],
-            "categories": [category.categoryName for k, category in
-                           enumerate(recipe.categories)],
-            'name': recipe.name,
-            'description': recipe.description,
-            'match number': ((arrLength - matchCounter) * 100) / arrLength
-        }
-        resDictArray.append((recipeToAdd))
-        if i == 20:
-            break
+        recipesMatch = findRecipesByIngredientsNames(ingredientsArr)
 
-    return (json.dumps(resDictArray,ensure_ascii=False).encode('utf8').decode())
+    return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
 
 
 @api.route('/getRecipesByCategory', methods=['GET', 'POST'])
@@ -228,13 +230,14 @@ def findRecipesByCategoriesAndIngredients(IngredientsArr, categoriesArr):
 
     if len(categoriesArr) != 0:
         setOfRecipesByCategory = findRecipesBycategories(categoriesArr)
-        return  setOfRecipesByCategory.intersection(setOfRecipesByIngredients)
-  
+        return setOfRecipesByCategory.intersection(setOfRecipesByIngredients)
+
     return setOfRecipesByIngredients
+
 
 def sortIngredients(IngredientsArr):
     dict = {}
-    resList =[]
+    resList = []
     y = Ingredient.query.filter_by(name=IngredientsArr[0]).first()
     num = len(y.recipes1)
     dict[IngredientsArr[0]] = num
@@ -277,10 +280,10 @@ def convertCategories(arr):
 
     for category in arr:
         resArr.append(categoryMap[category])
-    
+
     return resArr
 
-    
+
 def initTable():
     recipe1 = Recipe(name='pizza')
     recipe2 = Recipe(name='burger')
@@ -305,5 +308,3 @@ def initTable():
     ingredient3.recipes.append(recipe3)
     ingredient3.recipes.append(recipe3)
     db.session.commit()
-
-
