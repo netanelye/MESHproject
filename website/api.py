@@ -6,6 +6,8 @@ from flask_login import current_user
 from bs4 import BeautifulSoup
 import lxml
 import requests
+from itertools import chain, combinations
+
 
 foodyCategoriesLinkPath = 'https://foody.co.il/category/%d7%90%d7%a8%d7%95%d7%97%d7%95%d7%aa/%d7%90%d7%a8%d7%95%d7%97%d7%94-%d7%93%d7%99%d7%90%d7%98%d7%98%d7%99%d7%aa/'
 foodySubCategoryRecipesLinksPath = 'https://foody.co.il/category/%D7%9E%D7%AA%D7%9B%D7%95%D7%A0%D7%99-%D7%A2%D7%9E%D7' \
@@ -128,7 +130,6 @@ def getRecommended():
 
     return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
 
-
 @api.route('/getRecipes', methods=['GET', 'POST'])
 def getRecipes():
     ingredients = request.get_json(force=True)
@@ -136,8 +137,6 @@ def getRecipes():
     categoriesArr = []
 
     if len(ingredients.get("ingredients")) == 0:
-        return json.dumps(ingredientsArr)
-
         return json.dumps(ingredientsArr)
 
     for singleIngredient in ingredients.get("ingredients"):
@@ -151,10 +150,13 @@ def getRecipes():
     recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr, categoriesArr)
     arrLength = len(ingredientsArr)
     matchCounter = 0
+    setOfIds= set()
 
     resDictArray = []
-    while len(recipesMatch) < 15 and len(ingredientsArr) != 0:
+    while len(resDictArray) < 15 and len(ingredientsArr) != 0:
         for i, recipe in enumerate(recipesMatch):
+
+            number = round((arrLength - matchCounter) * 100 / arrLength, 2)
             recipeToAdd = {
                 'recipeId': recipe.recipe_id,
                 'imageLink': recipe.imageLink,
@@ -165,18 +167,27 @@ def getRecipes():
                                enumerate(recipe.categories)],
                 'name': recipe.name,
                 'description': recipe.description,
-                'match number': ((arrLength - matchCounter) * 100) / arrLength
+                'matchPrecentage': str(number) + "% התאמה למרכיבים שחיפשת"  
             }
-            resDictArray.append(recipeToAdd)
+            
+            if recipeToAdd['recipeId'] not in setOfIds:
+                resDictArray.append(recipeToAdd)
+                setOfIds.add(recipeToAdd['recipeId'])
+
             if len(resDictArray) == 15:
                 break
 
+        
         ingredientsArr.pop()
         matchCounter = matchCounter + 1
         recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr,categoriesArr)
 
     return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
 
+
+def getPowerSet(ingredientsArr):
+    s = list(ingredientsArr)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 @api.route('/getRecipesByCategory', methods=['GET', 'POST'])
 def getRecipesByCategory():
@@ -229,7 +240,7 @@ def findRecipesBycategories(categoriesArr):
 
 
 def findRecipesByCategoriesAndIngredients(IngredientsArr, categoriesArr):
-    if len(IngredientsArr) is 0:
+    if len(IngredientsArr) == 0:
         return {}
     categoriesArr = convertCategories(categoriesArr)
     setOfRecipesByIngredients = findRecipesByIngredientsNames(IngredientsArr)
