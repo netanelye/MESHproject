@@ -16,11 +16,13 @@ const RecipieList = (props) => {
         <Grid container spacing={3}>
             {props.recipes.map((recipe) => 
             {
-                return <Grid md={6} item>
+                return <Grid md={4} item>
                     <Recipe recipe={recipe}/>
                 </Grid>
+
             })}
         </Grid>
+
         
         </Container>
     )
