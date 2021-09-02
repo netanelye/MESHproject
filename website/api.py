@@ -247,12 +247,15 @@ def getRecipes():
             if len(resDictArray) == 15:
                 break
 
-        listOfPermute.pop()
-        if len(listOfPermute[-1]) < currLength:
-            matchCounter = matchCounter + 1
-            currLength = currLength - 1
-        recipesMatch = findRecipesByCategoriesAndIngredients(listOfPermute[-1], categoriesArr)
-
+        if len(listOfPermute) != 0:
+            listOfPermute.pop()
+        else:
+            break
+        if len(listOfPermute) != 0:
+            if len(listOfPermute[-1]) < currLength:
+                matchCounter = matchCounter + 1
+                currLength = currLength - 1
+            recipesMatch = findRecipesByCategoriesAndIngredients(listOfPermute[-1], categoriesArr)
     return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
 
 
