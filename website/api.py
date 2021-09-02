@@ -138,11 +138,14 @@ def getRecipes():
     if len(ingredients.get("ingredients")) == 0:
         return json.dumps(ingredientsArr)
 
+        return json.dumps(ingredientsArr)
+
     for singleIngredient in ingredients.get("ingredients"):
         ingredientsArr.append(singleIngredient.get('title'))
 
-    for category in ingredients.get("categories"):
-        categoriesArr.append(category)
+    if ingredients.get("categories") is not None:
+        for category in ingredients.get("categories"):
+            categoriesArr.append(category)
 
     ingredientsArr = sortIngredients(ingredientsArr)
     recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr, categoriesArr)
@@ -150,7 +153,7 @@ def getRecipes():
     matchCounter = 0
 
     resDictArray = []
-    while len(recipesMatch) < 15 or len(ingredientsArr) != 0:
+    while len(recipesMatch) < 15 and len(ingredientsArr) != 0:
         for i, recipe in enumerate(recipesMatch):
             recipeToAdd = {
                 'recipeId': recipe.recipe_id,
@@ -170,7 +173,7 @@ def getRecipes():
 
         ingredientsArr.pop()
         matchCounter = matchCounter + 1
-        recipesMatch = findRecipesByIngredientsNames(ingredientsArr)
+        recipesMatch = findRecipesByCategoriesAndIngredients(ingredientsArr,categoriesArr)
 
     return json.dumps(resDictArray, ensure_ascii=False).encode('utf8').decode()
 
@@ -199,12 +202,13 @@ def getRecipesByCategory():
 
 @api.route('/getdata', methods=['GET', 'POST'])
 def database():
-    buildDB()
+    #buildDB()
     return render_template("database.html", user=current_user, query=Recipe.query.all(), query2=Ingredient.query.all()
                            , query3=Category.query.all())
 
 
 def findRecipesByIngredientsNames(IngredientsArr):
+    print(IngredientsArr[0])
     y = Ingredient.query.filter_by(name=IngredientsArr[0]).first()
     setList = set(y.recipes1)
     for i in range(1, len(IngredientsArr)):
@@ -225,7 +229,9 @@ def findRecipesBycategories(categoriesArr):
 
 
 def findRecipesByCategoriesAndIngredients(IngredientsArr, categoriesArr):
-    categoriesArr = convertCategories(categoriesArr);
+    if len(IngredientsArr) is 0:
+        return {}
+    categoriesArr = convertCategories(categoriesArr)
     setOfRecipesByIngredients = findRecipesByIngredientsNames(IngredientsArr)
 
     if len(categoriesArr) != 0:
