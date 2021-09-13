@@ -36,7 +36,8 @@ const Favorites = (props) => {
   
 
   useEffect(() => {
-    axios.post("/api/getRecommended").then((res) => {
+    axios.defaults.baseURL = "https://mshisr-back.herokuapp.com/"
+    axios.post("https://mshisr-back.herokuapp.com/api/getRecommended").then((res) => {
       console.log("on GETRECOMMENDED  = " + res.data);
       setRecipes(res.data);
     });

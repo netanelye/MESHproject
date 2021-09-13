@@ -69,7 +69,8 @@ export default function Tags(props) {
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/getIngredientList").then((res) => {
+    axios.defaults.baseURL = "https://mshisr-back.herokuapp.com/"
+    axios.get("https://mshisr-back.herokuapp.com/api/getIngredientList").then((res) => {
       console.log(res);
       setIngredients(res.data);
     });
