@@ -2,16 +2,13 @@ from flask import Flask , redirect , url_for
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
-from flask_cors import CORS, cross_origin
-from flask.helpers import send_from_directory
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
 
 def create_app():
-    app = Flask(__name__, static_folder='mesh-ui/build', static_url_path='')
-    CORS(app)
+    app = Flask(__name__)
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
@@ -23,8 +20,8 @@ def create_app():
     from .auth import auth
     from .api import api
 
-    # app.register_blueprint(views, url_prefix='/')
-    # app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(api, url_prefix='/api')
 
     from .models import User, SearchElement
@@ -34,10 +31,6 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-    @app.route('/')
-    @cross_origin()
-    def serve():
-        return send_from_directory(app.static_folder, 'index.html')
 
     @login_manager.user_loader
     def load_user(id):
